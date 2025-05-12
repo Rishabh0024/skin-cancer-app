@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error!</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    {% if error %}
+    <h1>Error: <strong style="color: crimson">{{ error.msg }}</strong></h1>
+    <h2>Status: {{ error.status }}</h2>
+    {% if error.status == 404 %}
+    <img
+      src="./static/error_image/404_error_image.jpg"
+      alt="Error Image"
+      style="max-width: 300px"
+    />
+    {% else %}
+    <img
+      src="./static/error_image/error_image.jpg"
+      alt="Error Image"
+      style="max-width: 300px"
+    />
+    {% endif %} {% endif %}
+    <button onclick="home()" id="errHome">Go to HomePage</button>
+  </body>
+  <script>
+    <!-- window.location.href = "/"; -->
+    function home() {
+      window.location.href = "/";
+    }
+  </script>
+</html>

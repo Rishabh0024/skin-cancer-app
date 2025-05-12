@@ -1,0 +1,11 @@
+__pycache__/
+venv/
+*.pyc
+*.keras
+*.h5
+*.pkl
+*.db
+instance/
+.env
+static/uploads/*
+models/*
