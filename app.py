@@ -15,7 +15,7 @@ app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg', 'png'}
 
 #########################################
 
-model_url = 'https://skin-cancer-models.s3.ap-south-1.amazonaws.com/skin_cancer_model.keras'
+model_url = 'https://skin-cancer-models-01.s3.ap-south-1.amazonaws.com/skin_cancer_model.keras'
 model_path = './models/skin_cancer_model.keras'
 
 # Download the model if not already present
