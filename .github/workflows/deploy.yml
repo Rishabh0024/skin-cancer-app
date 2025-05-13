@@ -20,15 +20,29 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy Flask App
+      - name: Deploy Flask App to EC2
         run: |
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            # Kill any existing app.py process (safe restart)
             pkill -f app.py || true
-            cd $HOME/${{ secrets.REPO_NAME }} || git clone https://github.com/${{ github.repository }}.git $HOME/${{ secrets.REPO_NAME }}
+
+            # Go to project directory or clone if missing
+            cd $HOME/${{ secrets.REPO_NAME }} || \
+              git clone https://github.com/${{ github.repository }}.git $HOME/${{ secrets.REPO_NAME }}
+
             cd $HOME/${{ secrets.REPO_NAME }}
+
+            # Pull latest code
             git pull origin main
+
+            # Setup virtual environment
             python3 -m venv venv
             source venv/bin/activate
+
+            # Install Python dependencies
+            pip install --upgrade pip
             pip install -r requirements.txt
+
+            # Restart Flask app in background
             nohup python3 app.py > app.log 2>&1 &
           EOF

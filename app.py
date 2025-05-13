@@ -1,9 +1,11 @@
 import os
 import numpy as np
 import tensorflow as tf
+import requests
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 import json
+
 
 # Flask app setup
 app = Flask(__name__)
@@ -11,8 +13,27 @@ UPLOAD_FOLDER = './static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg', 'png'}
 
+#########################################
+
+model_url = 'https://skin-cancer-models.s3.ap-south-1.amazonaws.com/skin_cancer_model.keras'
+model_path = './models/skin_cancer_model.keras'
+
+# Download the model if not already present
+if not os.path.exists(model_path):
+    print("Downloading model...")
+    r = requests.get(model_url)
+    os.makedirs('models', exist_ok=True)
+    with open(model_path, 'wb') as f:
+        f.write(r.content)
+
+# Load the model
+# model = tf.keras.models.load_model(model_path)
+
+#########################################
+
 # Load the trained model and class names
-model = tf.keras.models.load_model('./models/skin_cancer_model.keras')
+# model = tf.keras.models.load_model('./models/skin_cancer_model.keras')
+model = tf.keras.models.load_model(model_path)
 with open('./data/class_names.json', 'r') as f:
     class_names = json.load(f) # Loaded class names from JSON
 
