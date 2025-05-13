@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import tensorflow as tf
+import boto3
 import requests
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -13,27 +14,49 @@ UPLOAD_FOLDER = './static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg', 'png'}
 
+########################################
+
+# S3 Config
+bucket_name = 'skin-cancer-models-01'
+s3_key = 'skin_cancer_model.keras'
+local_model_path = 'models/skin_cancer_model.keras'
+
+# Ensure 'models' directory exists
+os.makedirs('models', exist_ok=True)
+
+# Download if not already present
+if not os.path.exists(local_model_path):
+    print("Downloading model from S3...")
+    s3 = boto3.client('s3')
+    s3.download_file(bucket_name, s3_key, local_model_path)
+    print("Model downloaded.")
+
+# Load the model locally
+# model = tf.keras.models.load_model(local_model_path)
+
+
 #########################################
 
-model_url = 'https://skin-cancer-models-01.s3.ap-south-1.amazonaws.com/skin_cancer_model.keras'
-model_path = './models/skin_cancer_model.keras'
+# model_url = 'https://skin-cancer-models-01.s3.ap-south-1.amazonaws.com/skin_cancer_model.keras'
+# model_path = './models/skin_cancer_model.keras'
 
-# Download the model if not already present
-if not os.path.exists(model_path):
-    print("Downloading model...")
-    r = requests.get(model_url)
-    os.makedirs('models', exist_ok=True)
-    with open(model_path, 'wb') as f:
-        f.write(r.content)
+# # Download the model if not already present
+# if not os.path.exists(model_path):
+#     print("Downloading model...")
+#     r = requests.get(model_url)
+#     os.makedirs('models', exist_ok=True)
+#     with open(model_path, 'wb') as f:
+#         f.write(r.content)
 
-# Load the model
+# # Load the model
 # model = tf.keras.models.load_model(model_path)
 
 #########################################
 
 # Load the trained model and class names
 # model = tf.keras.models.load_model('./models/skin_cancer_model.keras')
-model = tf.keras.models.load_model(model_path)
+# model = tf.keras.models.load_model(model_path)
+model = tf.keras.models.load_model(local_model_path)
 with open('./data/class_names.json', 'r') as f:
     class_names = json.load(f) # Loaded class names from JSON
 
