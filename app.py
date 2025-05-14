@@ -156,8 +156,6 @@
 #     app.run(host='0.0.0.0', port=5000, debug=True)
 
 
-
-
 ####################################################################################################################
 
 import os
@@ -173,6 +171,7 @@ UPLOAD_FOLDER = './static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg', 'png'}
 
+
 # Ensure required directories exist
 os.makedirs('models', exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -183,6 +182,7 @@ model = tf.keras.models.load_model(model_path)
 
 with open('./data/class_names.json', 'r') as f:
     class_names = json.load(f)
+
 
 # Function to clear uploaded files
 def clear_uploads():
@@ -198,6 +198,7 @@ def clear_uploads():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+
 # 404 error handler
 @app.errorhandler(404)
 def page_not_found(e):
@@ -208,32 +209,45 @@ def page_not_found(e):
 def index():
     clear_uploads()
     return render_template('index.html')
-
 # Prediction route
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'file' not in request.files:
-        return "No file part in the request", 400
+        return render_template('error.html', error={"msg": "No file part in the request", "status": 400}), 400
 
     file = request.files['file']
-    if file.filename == '':
-        return "No selected file", 400
 
+    # Check if the file is empty
+    if file.filename == '':
+        return render_template('error.html', error={"msg": "No selected file", "status": 400}), 400
+
+    # Validate file type and process
     if file and allowed_file(file.filename):
         clear_uploads()
+        # Secure and save the uploaded file
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
+
         try:
+            # Load and preprocess the image
             img = tf.keras.preprocessing.image.load_img(filepath, target_size=(128, 128))
             img_array = tf.keras.preprocessing.image.img_to_array(img) / 255.0
-            img_array = np.expand_dims(img_array, axis=0)
+            img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
 
+
+            # Make prediction
             prediction = model.predict(img_array)
-            predicted_class_index = np.argmax(prediction[0])
-            predicted_class_name = class_names[str(predicted_class_index)]
-            probability = prediction[0][predicted_class_index] * 100
+            predicted_class_index = np.argmax(prediction[0])  # Get the class index
+            predicted_class_name = class_names[str(predicted_class_index)]  # Fetch class name from JSON
+            probability = prediction[0][predicted_class_index] * 100  # Convert to percentage
+
+            if predicted_class_name == 'non_cancerous_skin': 
+                predicted_class_name = '✅ Great news! No signs of skin cancer detected.'
+
+            if predicted_class_name == 'non_skin': 
+                return render_template('error.html', error={"msg": "Unprocessable Entity: Please Input Valid Skin Image!", "status": 422}), 422
 
             return render_template(
                 'index.html',
@@ -243,8 +257,10 @@ def predict():
             )
 
         except Exception as e:
+            # Handle errors during prediction
             return render_template('error.html', error={"msg": f"Prediction Error: {str(e)}", "status": 500}), 500
 
+    # Return error for invalid file types
     return render_template('error.html', error={"msg": "Invalid File Type", "status": 400}), 400
 
 # Run the app

@@ -1,9 +1,9 @@
-[
-    "Actinic Keratoses and Intraepithelial Carcinoma",
-    "Basal Cell Carcinoma", 
-    "Benign Keratosis-like Lesions",  
-    "Dermatofibroma", 
-    "Melanoma",  
-    "Melanocytic Nevi",  
-    "Vascular Lesion"
-]
+{
+    "0": "Actinic Keratoses and Intraepithelial Carcinoma",
+    "1": "Basal Cell Carcinoma",
+    "2": "Benign Keratosis-like Lesions",
+    "3": "Dermatofibroma",
+    "4": "Melanoma",
+    "5": "Melanocytic Nevi",
+    "6": "Vascular Lesion"
+}
