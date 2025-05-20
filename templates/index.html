@@ -39,14 +39,27 @@
 
       .navbar-brand {
         color: rgb(255 255 255);
+        white-space: wrap;
       }
-
+      
       .navbar.fixed-top {
         background-color: rgb(0 34 69) !important;
       }
-
+      
       .navbar.fixed-bottom {
         background-color: rgb(27 30 66) !important;
+      }
+      
+      ._footer{
+        background-color: rgb(27 30 66) !important;
+        color: rgb(255 255 255);
+        margin-inline-end: 0px;
+        margin-bottom: 0px;
+        margin-block: 0px;
+      }
+      
+      .footer_inside {
+        color: aliceblue !important;
       }
     </style>
   </head>
@@ -326,19 +339,22 @@
     <!-- /////////////////////////////////// -->
 
     <!-- footer -->
-    <nav class="navbar fixed-bottom bg-body-tertiary">
+    <div class="_footer">
+      <p class="footer_inside" style="font-size: small"></p>
+        &copy; Copyright 2025 checkyourskin.site | All Rights Reserved. | This
+        website is completely designed and developed by Rishabh Dixit and Sahil
+        Verma under the guidance of Er. Hrishabh Prajapati Sir.
+      </p>
+    </div>
+    <!-- <nav class="navbar fixed-bottom bg-body-tertiary">
       <div class="container-fluid">
         <a class="navbar-brand" style="font-size: small"
           >&copy; Copyright 2025 checkyourskin.site | All Rights Reserved. |
           This website is completely designed and developed by Rishabh Dixit and
           Sahil Verma under the guidance of Er. Hrishabh Prajapati Sir.</a
         >
-        <!-- <a class="navbar-brand" style="font-size: small">
-          This website completely designed and developed by Rishabh Dixit and
-          Sahil Verma under the guidance of Er. Hrishabh Prajapati.
-        </a> -->
       </div>
-    </nav>
+    </nav> -->
 
     <!-- /////////////////////////////////// -->
 
